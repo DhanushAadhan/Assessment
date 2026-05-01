@@ -1,11 +1,6 @@
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import {
-  MdDashboard,
-  MdPeople,
-  MdPersonAdd,
-  MdLogout,
-} from "react-icons/md";
+import { MdDashboard, MdPeople, MdPersonAdd, MdLogout, MdClose } from "react-icons/md";
 
 const links = [
   { to: "/dashboard", label: "Dashboard", icon: <MdDashboard size={20} /> },
@@ -13,7 +8,7 @@ const links = [
   { to: "/add-employee", label: "Add Employee", icon: <MdPersonAdd size={20} /> },
 ];
 
-const Sidebar = () => {
+const Sidebar = ({ isOpen, onClose }) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -23,10 +18,18 @@ const Sidebar = () => {
   };
 
   return (
-    <aside className="fixed top-0 left-0 h-screen w-64 bg-[#0f172a] text-white flex flex-col z-50">
-      <div className="p-6 border-b border-slate-700">
-        <h1 className="text-xl font-bold text-indigo-400">EMS Admin</h1>
-        <p className="text-xs text-slate-400 mt-1">Employee Management</p>
+    <aside
+      className={`fixed top-0 left-0 h-screen w-64 bg-[#0f172a] text-white flex flex-col z-50 transition-transform duration-300
+        ${isOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0`}
+    >
+      <div className="p-6 border-b border-slate-700 flex items-center justify-between">
+        <div>
+          <h1 className="text-xl font-bold text-indigo-400">EMS Admin</h1>
+          <p className="text-xs text-slate-400 mt-1">Employee Management</p>
+        </div>
+        <button onClick={onClose} className="lg:hidden text-slate-400 hover:text-white">
+          <MdClose size={22} />
+        </button>
       </div>
 
       <nav className="flex-1 p-4 space-y-1">
@@ -34,6 +37,7 @@ const Sidebar = () => {
           <NavLink
             key={link.to}
             to={link.to}
+            onClick={onClose}
             className={({ isActive }) =>
               `flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-all ${
                 isActive
@@ -50,12 +54,12 @@ const Sidebar = () => {
 
       <div className="p-4 border-t border-slate-700">
         <div className="flex items-center gap-3 mb-3">
-          <div className="w-9 h-9 rounded-full bg-indigo-500 flex items-center justify-center text-sm font-bold">
+          <div className="w-9 h-9 rounded-full bg-indigo-500 flex items-center justify-center text-sm font-bold shrink-0">
             {user?.name?.slice(0, 2).toUpperCase()}
           </div>
-          <div>
-            <p className="text-sm font-medium">{user?.name}</p>
-            <p className="text-xs text-slate-400">{user?.email}</p>
+          <div className="overflow-hidden">
+            <p className="text-sm font-medium truncate">{user?.name}</p>
+            <p className="text-xs text-slate-400 truncate">{user?.email}</p>
           </div>
         </div>
         <button
